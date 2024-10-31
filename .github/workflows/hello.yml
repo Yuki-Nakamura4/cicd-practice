@@ -1,0 +1,8 @@
+name: Hello # ワークフロー名
+on: push # トリガーイベント(push時に実行)
+jobs:
+  hello: # ジョブID
+    runs-on: ubuntu-latest # ランナー(実行環境)
+    steps: # ステップ(実行する処理)
+      - run: echo "Hello, world!" # シェルコマンドの実行
+      - uses: actions/checkout@v4 # アクションの呼び出し。GitHubリポジトリのチェックアウト
