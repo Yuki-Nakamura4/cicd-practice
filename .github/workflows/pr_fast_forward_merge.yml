@@ -21,7 +21,7 @@ jobs:
 
       - name: Set safe directory
         run: |
-          git config --global --add safe.directory *
+          git config --global --add safe.directory "$(pwd)"
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
