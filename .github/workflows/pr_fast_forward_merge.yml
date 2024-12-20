@@ -7,14 +7,13 @@ on:
   pull_request:
     branches:
       - main
-    types: [opened, synchronize, reopened]
+    types: [labeled]
 
 jobs:
   pull_request_merge:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' }}
-
+    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' && startsWith(github.event.label.name, 'merge-ff')}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
