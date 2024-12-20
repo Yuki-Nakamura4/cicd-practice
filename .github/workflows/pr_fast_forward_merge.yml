@@ -10,6 +10,9 @@ jobs:
     if: github.event.label.name == 'merge-ff'
     runs-on: ubuntu-latest
 
+    env:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }} # GitHub SecretsからPAT_TOKENを環境変数として設定
+
     steps:
       # チェックアウト
       - name: Checkout repository
@@ -25,7 +28,7 @@ jobs:
       - name: Disable branch protection
         run: |
           curl -X PUT \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: Bearer ${{ env.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"required_status_checks": null, "enforce_admins": null, "required_pull_request_reviews": null, "restrictions": null}' \
             https://api.github.com/repos/Yuki-Nakamura4/cicd-practice/branches/main/protection
@@ -44,14 +47,14 @@ jobs:
       # リモートにプッシュ
       - name: Push changes
         run: |
-          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/Yuki-Nakamura4/cicd-practice.git
+          git remote set-url origin https://github-actions:${{ env.PAT_TOKEN }}@github.com/Yuki-Nakamura4/cicd-practice.git
           git push origin main
 
       # 保護ルールを再有効化 (GitHub API)
       - name: Re-enable branch protection
         run: |
           curl -X PUT \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: Bearer ${{ env.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"required_status_checks": {"strict": true, "contexts": []}, "enforce_admins": true, "required_pull_request_reviews": {"dismiss_stale_reviews": true}, "restrictions": null}' \
             https://api.github.com/repos/Yuki-Nakamura4/cicd-practice/branches/main/protection
