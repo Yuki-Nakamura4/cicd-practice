@@ -29,7 +29,7 @@ jobs:
         run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
       - name: Set safe directory
-        run: git config --global --add safe.directory /home/runner/work/cicd-practice/cicd-practice
+        run: git config --global --add safe.directory /home/runner/
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
