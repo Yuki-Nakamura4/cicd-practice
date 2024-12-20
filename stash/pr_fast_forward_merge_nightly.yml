@@ -1,0 +1,31 @@
+# .github/workflows/pull_request_merge.yml
+
+name: "pull request merge"
+
+on:
+  pull_request:
+    types: [labeled]
+jobs:
+  nightly-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check actual workspace path
+        run: pwd
+
+      - name: Configure Git safe.directory
+        run: git config --global --add safe.directory /github/workspace
+
+      - name: Run Nightly Merge Action
+        uses: your-action/nightly-merge@v1
+        with:
+          stable_branch: "develop"
+          development_branch: "main"
+          allow_ff: true
+          ff_only: true
+          allow_forks: false
+          user_name: "GitHub Nightly Merge Action"
+          user_email: "actions@github.com"
+          push_token: ${{ secrets.GITHUB_TOKEN }}
