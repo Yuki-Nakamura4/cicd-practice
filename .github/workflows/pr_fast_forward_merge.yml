@@ -33,4 +33,4 @@ jobs:
 
           user_name: "GitHub Nightly Merge Action"
           user_email: "actions@github.com"
-          push_token: ${{ secrets.PAT_TOKEN }}
+          push_token: "${{ secrets.PAT_TOKEN }}"
