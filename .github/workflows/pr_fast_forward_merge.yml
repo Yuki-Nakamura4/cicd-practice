@@ -50,7 +50,7 @@ jobs:
         run: |
           git remote set-url origin https://github-actions:${{ env.GITHUB_TOKEN }}@github.com/Yuki-Nakamura4/cicd-practice.git
           git push origin main
-      # 保護ルールを再有効化 (GitHub API)
+      # 保護ルールを再有効化する (GitHub API)
       - name: Re-enable branch protection for main and develop
         run: |
           for branch in main develop; do
