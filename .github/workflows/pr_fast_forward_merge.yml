@@ -21,8 +21,8 @@ jobs:
 
       - name: Set safe directory
         run: |
-          sudo chown -R $(id -u):$(id -g) "${GITHUB_WORKSPACE}"
-          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          sudo chown -R $(id -u):$(id -g) /github/workspace
+          git config --global --add safe.directory /github/workspace
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
