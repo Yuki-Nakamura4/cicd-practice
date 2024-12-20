@@ -31,6 +31,8 @@ jobs:
           allow_ff: true
           ff_only: true
 
+          allow_forks: true
+
           user_name: "GitHub Nightly Merge Action"
           user_email: "actions@github.com"
           push_token: "PAT_TOKEN"
