@@ -1,5 +1,5 @@
 # 本番環境デプロイ用のマージアクション
-# developブランチからmainブランチへのPRは自動的にfast-forwardでマージする
+# merge-ffというラベルがつけられたら自動的にfast-forwardでマージする
 
 name: "Pull Request Fast-Forward Merge "
 
@@ -22,7 +22,7 @@ jobs:
         run: echo "GITHUB_WORKSPACE=${{ github.workspace }}"
 
       - name: Set safe directory
-        run: git config --global --add safe.directory ${{GITHUB_WORKSPACE}}
+        run: git config --global --add safe.directory ${{ github.workspace }}
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
