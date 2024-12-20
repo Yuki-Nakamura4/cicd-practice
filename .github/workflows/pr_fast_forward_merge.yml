@@ -1,7 +1,7 @@
 # 本番環境デプロイ用のマージアクション
 # developブランチからmainブランチへのPRは自動的にfast-forwardでマージする
 
-name: "Pull Request Fast-Forward Merge "
+name: "Pull Request Fast-Forward Merge"
 
 on:
   pull_request:
