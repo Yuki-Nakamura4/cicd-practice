@@ -1,0 +1,60 @@
+name: Merge Fast-Forward
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  merge-ff:
+    if: github.event.label.name == 'merge-ff'
+    runs-on: ubuntu-latest
+
+    env:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }} # GitHub SecretsからPAT_TOKENを環境変数として設定
+
+    steps:
+      # チェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # マージの準備
+      - name: Set up Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 保護ルールを無効化 (GitHub API)
+      - name: Disable branch protection
+        run: |
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ env.PAT_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"required_status_checks": null, "enforce_admins": null, "required_pull_request_reviews": null, "restrictions": null}' \
+            https://api.github.com/repos/Yuki-Nakamura4/cicd-practice/branches/main/protection
+
+      # リモートブランチをフェッチ
+      - name: Fetch all branches
+        run: git fetch --all
+
+      # mainブランチに移動して、developをファストフォワードでマージ
+      - name: Merge develop into main (fast-forward)
+        run: |
+          git checkout main
+          git pull origin main  # 最新のmainを取得
+          git merge --ff-only origin/develop  # developをmainにファストフォワードマージ
+
+      # リモートにプッシュ
+      - name: Push changes
+        run: |
+          git remote set-url origin https://github-actions:${{ env.PAT_TOKEN }}@github.com/Yuki-Nakamura4/cicd-practice.git
+          git push origin main
+
+      # 保護ルールを再有効化 (GitHub API)
+      - name: Re-enable branch protection
+        run: |
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ env.PAT_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"required_status_checks": {"strict": true, "contexts": []}, "enforce_admins": true, "required_pull_request_reviews": {"dismiss_stale_reviews": true}, "restrictions": null}' \
+            https://api.github.com/repos/Yuki-Nakamura4/cicd-practice/branches/main/protection
