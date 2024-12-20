@@ -1,7 +1,7 @@
 # 本番環境デプロイ用のマージアクション
 # developブランチからmainブランチへのPRは自動的にfast-forwardでマージする
 
-name: "Pull Request Fast-Forward Merge"
+name: "Pull Request Fast-Forward Merge "
 
 on:
   pull_request:
@@ -30,7 +30,6 @@ jobs:
 
           allow_ff: true
           ff_only: true
-          allow_forks: true
 
           user_name: "GitHub Nightly Merge Action"
           user_email: "actions@github.com"
