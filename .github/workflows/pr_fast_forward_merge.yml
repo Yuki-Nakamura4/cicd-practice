@@ -19,13 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set safe directory globally
-        run: |
-          git config --global --add safe.directory /github/workspace
-          echo "safe.directory set globally"
+      - name: Debug
+        run: echo "GITHUB_WORKSPACE '${GITHUB_WORKSPACE}'"
 
-      - name: Debug safe.directory
-        run: git config --global --get-all safe.directory
+      - name: Set safe directory
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
@@ -41,6 +39,5 @@ jobs:
           push_token: "PAT_TOKEN"
 
         env:
-          GIT_CONFIG_GLOBAL: /github/home/.gitconfig
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
