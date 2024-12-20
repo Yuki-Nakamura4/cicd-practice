@@ -33,4 +33,3 @@ jobs:
 
           user_name: "GitHub Nightly Merge Action"
           user_email: "actions@github.com"
-          push_token: ${{ secrets.GITHUB_TOKEN }}
