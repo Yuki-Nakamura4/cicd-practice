@@ -1,0 +1,32 @@
+# 本番環境デプロイ用のマージアクション
+# developブランチからmainブランチへのPRは自動的にfast-forwardでマージする
+
+name: "Pull Request Fast-Forward Merge "
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pull_request_merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Fast Forword Merge
+        uses: robotology/gh-action-nightly-merge@v1.3.2
+        with:
+          stable_branch: ${{ github.event.pull_request.base.ref }}
+          development_branch: ${{ github.event.pull_request.head.ref }}
+
+          allow_ff: true
+          ff_only: true
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
