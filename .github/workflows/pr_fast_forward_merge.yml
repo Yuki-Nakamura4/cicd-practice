@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set safe directory
-        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+        run: git config --global --add safe.directory /github/workspace
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
