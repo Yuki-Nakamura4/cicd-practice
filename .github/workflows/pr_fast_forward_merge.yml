@@ -1,46 +1,34 @@
-# 本番環境デプロイ用のマージアクション
-# developブランチからmainブランチへのPRは自動的にfast-forwardでマージする
-
-name: "Pull Request Fast-Forward Merge "
+name: Merge Fast-Forward
 
 on:
   pull_request:
-    branches:
-      - main
-    types: [opened, synchronize, reopened]
+    types:
+      - labeled
 
 jobs:
-  pull_request_merge:
+  merge-ff:
+    if: github.event.label.name == 'merge-ff'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' }}
 
     steps:
-      - name: Checkout
+      # チェックアウト
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Debug
-        run: echo "GITHUB_WORKSPACE '${GITHUB_WORKSPACE}'"
+      # マージの準備
+      - name: Set up Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Debug Docker Workspace
-        run: echo "Inside Docker, workspace $(pwd)"
+      # 対象ブランチをファストフォワードでマージ
+      - name: Merge with fast-forward
+        run: |
+          git fetch origin
+          git checkout ${{ github.event.pull_request.base.ref }}
+          git merge --ff-only ${{ github.event.pull_request.head.ref }}
 
-      - name: Set safe directory
-        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-
-      - name: Set safe directory
-        run: git config --global --add safe.directory /home/runner/
-
-      - name: Fast Forword Merge
-        uses: robotology/gh-action-nightly-merge@v1.3.2
-        with:
-          stable_branch: ${{ github.event.pull_request.base.ref }}
-          development_branch: ${{ github.event.pull_request.head.ref }}
-
-          allow_ff: true
-          ff_only: true
-          push_token: "PAT_TOKEN"
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      # リモートにプッシュ
+      - name: Push changes
+        run: |
+          git push origin ${{ github.event.pull_request.base.ref }}
