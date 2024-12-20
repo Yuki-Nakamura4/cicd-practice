@@ -19,6 +19,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set safe directory
+        run: git config --global --add safe.directory /github/workspace
+
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
         with:
