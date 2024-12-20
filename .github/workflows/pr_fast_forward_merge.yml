@@ -1,5 +1,5 @@
 # 本番環境デプロイ用のマージアクション
-# merge-ffというラベルがつけられたら自動的にfast-forwardでマージする
+# developブランチからmainブランチへのPRは自動的にfast-forwardでマージする
 
 name: "Pull Request Fast-Forward Merge "
 
@@ -7,22 +7,20 @@ on:
   pull_request:
     branches:
       - main
-    types: [labeled]
+    types: [opened, synchronize, reopened]
 
 jobs:
   pull_request_merge:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' && startsWith(github.event.label.name, 'merge-ff')}}
+    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Debug GITHUB_WORKSPACE
-        run: echo "GITHUB_WORKSPACE=${{ github.workspace }}"
-
       - name: Set safe directory
-        run: git config --global --add safe.directory ${{ github.workspace }}
+        run: git config --global --add safe.directory ${GITHUB_WORKSPACE}
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
