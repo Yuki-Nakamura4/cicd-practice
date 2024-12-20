@@ -19,10 +19,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set safe directory
+      - name: Set safe directory globally
         run: |
-          sudo git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-          echo "safe.directory set to ${GITHUB_WORKSPACE}"
+          git config --global --add safe.directory /github/workspace
+          echo "safe.directory set globally"
+
+      - name: Debug safe.directory
+        run: git config --global --get-all safe.directory
 
       - name: Fast Forword Merge
         uses: robotology/gh-action-nightly-merge@v1.3.2
