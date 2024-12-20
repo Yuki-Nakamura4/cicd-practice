@@ -1,4 +1,4 @@
-name: Merge Fast-Forward PR
+name: Merge Fast-Forward
 
 on:
   pull_request:
