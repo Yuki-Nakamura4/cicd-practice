@@ -21,14 +21,18 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 対象ブランチをファストフォワードでマージ
-      - name: Merge with fast-forward
+      # リモートブランチをフェッチ
+      - name: Fetch all branches
+        run: git fetch --all
+
+      # mainブランチに移動して、developをファストフォワードでマージ
+      - name: Merge develop into main (fast-forward)
         run: |
-          git fetch origin
-          git checkout ${{ github.event.pull_request.base.ref }}
-          git merge --ff-only ${{ github.event.pull_request.head.ref }}
+          git checkout main
+          git pull origin main  # 最新のmainを取得
+          git merge --ff-only origin/develop  # developをmainにファストフォワードマージ
 
       # リモートにプッシュ
       - name: Push changes
         run: |
-          git push origin ${{ github.event.pull_request.base.ref }}
+          git push origin main
