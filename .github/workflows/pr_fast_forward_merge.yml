@@ -35,4 +35,5 @@ jobs:
       # リモートにプッシュ
       - name: Push changes
         run: |
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/Yuki-Nakamura4/cicd-practice.git
           git push origin main
