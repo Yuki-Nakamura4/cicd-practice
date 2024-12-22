@@ -27,37 +27,45 @@ jobs:
       # 保護ルールを無効化 (GitHub API)
       - name: Disable branch protection
         run: |
-          for branch in main develop; do
+          base_branch=$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
+          head_branch=$(jq -r .pull_request.head.ref "$GITHUB_EVENT_PATH")
+          for branch in $base_branch $head_branch; do
             curl -X DELETE \
               -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
               -d '{"required_status_checks":null,"enforce_admins":null,"required_pull_request_reviews":null, "restrictions":null}' \
-              https://api.github.com/repos/Yuki-Nakamura4/cicd-practice/branches/$branch/protection
+              https://api.github.com/repos/${{ github.repository }}/branches/$branch/protection
           done
 
       # リモートブランチをフェッチ
       - name: Fetch all branches
         run: git fetch --all
 
-      # mainブランチに移動して、developをファストフォワードでマージ
-      - name: Merge develop into main (fast-forward)
+      # baseブランチに移動して、headブランチをファストフォワードでマージ
+      - name: Merge head into base (fast-forward)
         run: |
-          git checkout main
-          git pull origin main
-          git merge --ff-only origin/develop
+          base_branch=$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
+          head_branch=$(jq -r .pull_request.head.ref "$GITHUB_EVENT_PATH")
+          git checkout $base_branch
+          git pull origin $base_branch
+          git merge --ff-only origin/$head_branch
 
       # リモートにプッシュ
       - name: Push changes
         run: |
-          git remote set-url origin https://github-actions:${{ env.GITHUB_TOKEN }}@github.com/Yuki-Nakamura4/cicd-practice.git
-          git push origin main
+          base_branch=$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
+          git remote set-url origin https://github-actions:${{ env.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push origin $base_branch
+
       # 保護ルールを再有効化(GitHub API)
-      - name: Re-enable branch protection for main and develop
+      - name: Re-enable branch protection for base and head
         run: |
-          for branch in main develop; do
+          base_branch=$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
+          head_branch=$(jq -r .pull_request.head.ref "$GITHUB_EVENT_PATH")
+          for branch in $base_branch $head_branch; do
             curl -X PUT \
               -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
               -d '{"required_status_checks": {"strict": true, "contexts": []}, "required_pull_request_reviews":{"required_approving_review_count":0}, "enforce_admins": true, "restrictions":null}' \
-              https://api.github.com/repos/Yuki-Nakamura4/cicd-practice/branches/$branch/protection
+              https://api.github.com/repos/${{ github.repository }}/branches/$branch/protection
           done
