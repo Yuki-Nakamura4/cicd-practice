@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      # secrets.GITHUB_TOKENだと、ブランチ保護ルールを無効化する権限が無いため、PATを利用する
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     steps:
